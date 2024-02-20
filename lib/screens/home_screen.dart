@@ -1,56 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:moonflix/models/webtoon_model.dart';
-import 'package:moonflix/services/api_service.dart';
-import 'package:moonflix/widgets/webtoon_widget.dart';
+import 'package:moonflix/models/movie_simple_model.dart';
+import 'package:moonflix/services/movie_api_service.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
-  final Future<List<WebtoonModel>> webtoons = ApiService.getTodaysToons();
+  final Future<List<MovieSimpleModel>> popularMovies =
+      ApiService.getPopularMovies();
+
+  final Future<List<MovieSimpleModel>> nowPlayingMovies =
+      ApiService.getNowPlayingMovies();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          "오늘의 웹툰",
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w400,
-          ),
+      body: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Popular Movies',
+              style: TextStyle(
+                fontSize: 26,
+              ),
+            ),
+            Expanded(
+              child: FutureBuilder(
+                future: popularMovies,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Column(
+                      children: [
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        Expanded(
+                          child: makeList(snapshot),
+                        ),
+                      ],
+                    );
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
+            ),
+            const Text(
+              'Now in Cinemas',
+              style: TextStyle(
+                fontSize: 26,
+              ),
+            ),
+          ],
         ),
-        centerTitle: true,
-        foregroundColor: Colors.green,
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        shadowColor: Colors.black,
-        elevation: 3,
-      ),
-      body: FutureBuilder(
-        future: webtoons,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Column(
-              children: [
-                const SizedBox(
-                  height: 50,
-                ),
-                Expanded(
-                  child: makeList(snapshot),
-                ),
-              ],
-            );
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
       ),
     );
   }
 
-  ListView makeList(AsyncSnapshot<List<WebtoonModel>> snapshot) {
+  ListView makeList(AsyncSnapshot<List<MovieSimpleModel>> snapshot) {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
       itemCount: snapshot.data!.length,
@@ -60,11 +70,41 @@ class HomeScreen extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         // print(index);
-        var webtoon = snapshot.data![index];
-        return Webtoon(
-          title: webtoon.title,
-          thumb: webtoon.thumb,
-          id: webtoon.id,
+        var movie = snapshot.data![index];
+        return GestureDetector(
+          onTap: () {},
+          child: Column(
+            children: [
+              Hero(
+                tag: movie.id,
+                child: Container(
+                  width: 500,
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 15,
+                          offset: const Offset(10, 10),
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                      ]),
+                  child: Image.network(
+                    'https://image.tmdb.org/t/p/w780/${movie.backdrop_path}',
+                  ),
+                ),
+              ),
+              // const SizedBox(
+              //   height: 10,
+              // ),
+              // Text(
+              //   movie.title,
+              //   style: const TextStyle(
+              //     fontSize: 22,
+              //   ),
+              // ),
+            ],
+          ),
         );
       },
       separatorBuilder: (context, index) => const SizedBox(

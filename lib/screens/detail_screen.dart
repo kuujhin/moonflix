@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:moonflix/models/webtoon_detail_model.dart';
 import 'package:moonflix/models/webtoon_episode_model.dart';
-import 'package:moonflix/services/api_service.dart';
+import 'package:moonflix/services/toon_api_service.dart';
 import 'package:moonflix/widgets/episode_widget.dart';
 
 class DetailScreen extends StatefulWidget {
