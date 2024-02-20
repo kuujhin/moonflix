@@ -27,7 +27,9 @@ class ApiService {
     final url = Uri.parse('$baseUrl/now-playing');
     final res = await http.get(url);
     if (res.statusCode == 200) {
-      final List<dynamic> movies = jsonDecode(res.body)['results'];
+      // final List<dynamic> movies = jsonDecode(res.body)['results'];
+      final List<dynamic> movies =
+          jsonDecode(utf8.decode(res.bodyBytes))['results'];
       for (var movie in movies) {
         movieInstances.add(MovieSimpleModel.fromJson(movie));
       }
@@ -41,7 +43,8 @@ class ApiService {
     final url = Uri.parse('$baseUrl/coming-soon');
     final res = await http.get(url);
     if (res.statusCode == 200) {
-      final List<dynamic> movies = jsonDecode(res.body)['results'];
+      final List<dynamic> movies =
+          jsonDecode(utf8.decode(res.bodyBytes))['results'];
       for (var movie in movies) {
         movieInstances.add(MovieSimpleModel.fromJson(movie));
       }
@@ -50,11 +53,11 @@ class ApiService {
     throw Error();
   }
 
-  static Future<MovieDetailModel> getMovieById(String id) async {
+  static Future<MovieDetailModel> getMovieById(int id) async {
     final url = Uri.parse('$baseUrl/movie?id=$id');
     final res = await http.get(url);
     if (res.statusCode == 200) {
-      final movie = jsonDecode(res.body);
+      final movie = jsonDecode(utf8.decode(res.bodyBytes));
       return MovieDetailModel.fromJson(movie);
     }
     throw Error();

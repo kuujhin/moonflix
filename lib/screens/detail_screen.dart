@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:moonflix/models/webtoon_detail_model.dart';
-import 'package:moonflix/models/webtoon_episode_model.dart';
-import 'package:moonflix/services/toon_api_service.dart';
-import 'package:moonflix/widgets/episode_widget.dart';
+import 'package:moonflix/models/movie_detail_model.dart';
+import 'package:moonflix/services/movie_api_service.dart';
 
 class DetailScreen extends StatefulWidget {
-  final String title, thumb, id;
+  final int id;
+  final String title, thumb;
 
   const DetailScreen({
     super.key,
+    required this.id,
     required this.title,
     required this.thumb,
-    required this.id,
   });
 
   @override
@@ -20,76 +18,18 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  late Future<WebtoonDetailModel> webtoon;
-  late Future<List<WebtoonEpisodeModel>> episodes;
-  late SharedPreferences prefs;
-  bool isLiked = false;
-
-  Future initPrefs() async {
-    prefs = await SharedPreferences.getInstance();
-
-    final likedToons = prefs.getStringList('likedToons');
-    if (likedToons != null) {
-      if (likedToons.contains(widget.id) == true) {
-        setState(() {
-          isLiked = true;
-        });
-      }
-    } else {
-      await prefs.setStringList('likedToons', []);
-    }
-  }
+  late Future<MovieDetailModel> movie;
 
   @override
   void initState() {
     super.initState();
-    webtoon = ApiService.getToonById(widget.id);
-    episodes = ApiService.getLatestEpisodesById(widget.id);
-    initPrefs();
-  }
-
-  onHeartTap() async {
-    final likedToons = prefs.getStringList('likedToons');
-    if (likedToons != null) {
-      if (isLiked) {
-        likedToons.remove(widget.id);
-      } else {
-        likedToons.add(widget.id);
-      }
-      await prefs.setStringList('likedToons', likedToons);
-      setState(() {
-        isLiked = !isLiked;
-      });
-    }
+    movie = ApiService.getMovieById(widget.id);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(
-          widget.title,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        centerTitle: true,
-        foregroundColor: Colors.green,
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        shadowColor: Colors.black,
-        elevation: 3,
-        actions: [
-          IconButton(
-            onPressed: onHeartTap,
-            icon: Icon(
-              isLiked ? Icons.favorite : Icons.favorite_outline,
-            ),
-          ),
-        ],
-      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(50),
@@ -113,13 +53,7 @@ class _DetailScreenState extends State<DetailScreen> {
                             ),
                           ]),
                       child: Image.network(
-                        widget.thumb,
-                        headers: const {
-                          'User-Agent':
-                              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
-                          'Referer': 'https://comic.naver.com',
-                        },
-                      ),
+                          'https://image.tmdb.org/t/p/w780/${widget.thumb}'),
                     ),
                   ),
                 ],
@@ -128,14 +62,14 @@ class _DetailScreenState extends State<DetailScreen> {
                 height: 25,
               ),
               FutureBuilder(
-                future: webtoon,
+                future: movie,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          snapshot.data!.about,
+                          snapshot.data!.overview,
                           style: const TextStyle(
                             fontSize: 16,
                           ),
@@ -144,7 +78,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           height: 15,
                         ),
                         Text(
-                          '${snapshot.data!.genre} / ${snapshot.data!.age}',
+                          '${snapshot.data!.genres} / ${snapshot.data!.release_date}',
                           style: const TextStyle(
                             fontSize: 16,
                           ),
@@ -158,23 +92,6 @@ class _DetailScreenState extends State<DetailScreen> {
               const SizedBox(
                 height: 15,
               ),
-              FutureBuilder(
-                future: episodes,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Column(
-                      children: [
-                        for (var episode in snapshot.data!)
-                          Episode(
-                            episode: episode,
-                            webtoonId: widget.id,
-                          ),
-                      ],
-                    );
-                  }
-                  return Container();
-                },
-              )
             ],
           ),
         ),

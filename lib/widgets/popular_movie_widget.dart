@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moonflix/models/movie_simple_model.dart';
+import 'package:moonflix/screens/detail_screen.dart';
 
 class PopularMovie extends StatelessWidget {
   const PopularMovie({
@@ -12,7 +13,19 @@ class PopularMovie extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => DetailScreen(
+        //       id: movie.id,
+        //       title: movie.title,
+        //       thumb: movie.poster_path,
+        //     ),
+        //     // fullscreenDialog: true,
+        //   ),
+        // );
+      },
       child: Column(
         children: [
           Hero(
@@ -38,15 +51,6 @@ class PopularMovie extends StatelessWidget {
               ),
             ),
           ),
-          // const SizedBox(
-          //   height: 10,
-          // ),
-          // Text(
-          //   movie.title,
-          //   style: const TextStyle(
-          //     fontSize: 22,
-          //   ),
-          // ),
         ],
       ),
     );
