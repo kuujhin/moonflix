@@ -36,12 +36,12 @@ class ApiService {
     throw Error();
   }
 
-  static Future<List<MovieSimpleModel>> getCommingSoonMovies() async {
+  static Future<List<MovieSimpleModel>> getComingSoonMovies() async {
     List<MovieSimpleModel> movieInstances = [];
-    final url = Uri.parse('$baseUrl/comming-soon');
+    final url = Uri.parse('$baseUrl/coming-soon');
     final res = await http.get(url);
     if (res.statusCode == 200) {
-      final List<dynamic> movies = jsonDecode(res.body);
+      final List<dynamic> movies = jsonDecode(res.body)['results'];
       for (var movie in movies) {
         movieInstances.add(MovieSimpleModel.fromJson(movie));
       }
