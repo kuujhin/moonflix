@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moonflix/models/movie_simple_model.dart';
 import 'package:moonflix/services/movie_api_service.dart';
+import 'package:moonflix/widgets/movie_widget.dart';
+import 'package:moonflix/widgets/popular_movie_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -36,7 +38,7 @@ class HomeScreen extends StatelessWidget {
                   future: popularMovies,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return makePopularList(snapshot);
+                      return makeMovieList(snapshot, true);
                     }
                     return const SizedBox(
                       height: 100,
@@ -68,7 +70,7 @@ class HomeScreen extends StatelessWidget {
                             height: 15,
                           ),
                           Expanded(
-                            child: makeNowPlayingList(snapshot),
+                            child: makeMovieList(snapshot, false),
                           ),
                         ],
                       );
@@ -103,7 +105,7 @@ class HomeScreen extends StatelessWidget {
                             height: 15,
                           ),
                           Expanded(
-                            child: makeComingSoonList(snapshot),
+                            child: makeMovieList(snapshot, false),
                           ),
                         ],
                       );
@@ -124,7 +126,8 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  ListView makePopularList(AsyncSnapshot<List<MovieSimpleModel>> snapshot) {
+  ListView makeMovieList(
+      AsyncSnapshot<List<MovieSimpleModel>> snapshot, popular) {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
       itemCount: snapshot.data!.length,
@@ -135,170 +138,10 @@ class HomeScreen extends StatelessWidget {
       itemBuilder: (context, index) {
         // print(index);
         var movie = snapshot.data![index];
-        return GestureDetector(
-          onTap: () {},
-          child: Column(
-            children: [
-              Hero(
-                tag: movie.id,
-                child: Container(
-                  width: 300,
-                  height: 200,
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 15,
-                          offset: const Offset(10, 10),
-                          color: Colors.black.withOpacity(0.5),
-                        ),
-                      ]),
-                  child: Image.network(
-                    'https://image.tmdb.org/t/p/w780/${movie.backdrop_path}',
-                    width: 400,
-                    height: 250,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              // const SizedBox(
-              //   height: 10,
-              // ),
-              // Text(
-              //   movie.title,
-              //   style: const TextStyle(
-              //     fontSize: 22,
-              //   ),
-              // ),
-            ],
-          ),
-        );
+        return popular ? PopularMovie(movie: movie) : Movie(movie: movie);
       },
       separatorBuilder: (context, index) => const SizedBox(
         width: 40,
-      ),
-    );
-  }
-
-  ListView makeNowPlayingList(AsyncSnapshot<List<MovieSimpleModel>> snapshot) {
-    return ListView.separated(
-      scrollDirection: Axis.horizontal,
-      itemCount: snapshot.data!.length,
-      padding: const EdgeInsets.symmetric(
-        vertical: 10,
-        horizontal: 10,
-      ),
-      itemBuilder: (context, index) {
-        // print(index);
-        var movie = snapshot.data![index];
-        return GestureDetector(
-          onTap: () {},
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Hero(
-                tag: movie.id,
-                child: Container(
-                  width: 150,
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 15,
-                          offset: const Offset(10, 10),
-                          color: Colors.black.withOpacity(0.5),
-                        ),
-                      ]),
-                  child: Image.network(
-                    'https://image.tmdb.org/t/p/w780/${movie.backdrop_path}',
-                    width: 150,
-                    height: 150,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              SizedBox(
-                width: 150,
-                child: Text(
-                  movie.title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-      separatorBuilder: (context, index) => const SizedBox(
-        width: 20,
-      ),
-    );
-  }
-
-  ListView makeComingSoonList(AsyncSnapshot<List<MovieSimpleModel>> snapshot) {
-    return ListView.separated(
-      scrollDirection: Axis.horizontal,
-      itemCount: snapshot.data!.length,
-      padding: const EdgeInsets.symmetric(
-        vertical: 10,
-        horizontal: 10,
-      ),
-      itemBuilder: (context, index) {
-        // print(index);
-        var movie = snapshot.data![index];
-        return GestureDetector(
-          onTap: () {},
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Hero(
-                tag: movie.id,
-                child: Container(
-                  width: 150,
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 15,
-                          offset: const Offset(10, 10),
-                          color: Colors.black.withOpacity(0.5),
-                        ),
-                      ]),
-                  child: Image.network(
-                    'https://image.tmdb.org/t/p/w780/${movie.backdrop_path}',
-                    width: 150,
-                    height: 150,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              SizedBox(
-                width: 150,
-                child: Text(
-                  movie.title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-      separatorBuilder: (context, index) => const SizedBox(
-        width: 20,
       ),
     );
   }
