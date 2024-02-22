@@ -4,6 +4,18 @@ import 'package:moonflix/services/movie_api_service.dart';
 import 'package:moonflix/widgets/movie_widget.dart';
 import 'package:moonflix/widgets/popular_movie_widget.dart';
 
+import 'package:flutter/gestures.dart';
+
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods and getters like dragDevices
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        // etc.
+      };
+}
+
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
@@ -20,106 +32,76 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+          "MoonFlix",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        centerTitle: true,
+        foregroundColor: Colors.green,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        shadowColor: Colors.black,
+        elevation: 3,
+      ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Popular Movies',
-                style: TextStyle(
-                  fontSize: 26,
-                ),
-              ),
-              SizedBox(
-                height: 270,
-                child: FutureBuilder(
-                  future: popularMovies,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return makeMovieList(snapshot, true);
-                    }
-                    return const SizedBox(
-                      height: 100,
-                      child: Center(
+        child: ScrollConfiguration(
+          behavior: MyCustomScrollBehavior(),
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                title('Popular Movies'),
+                SizedBox(
+                  height: 270,
+                  child: FutureBuilder(
+                    future: popularMovies,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return makeMovieList(snapshot, true);
+                      }
+                      return const Center(
                         child: CircularProgressIndicator(),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              const Text(
-                'Now in Cinemas',
-                style: TextStyle(
-                  fontSize: 26,
-                ),
-              ),
-              SizedBox(
-                height: 270,
-                child: FutureBuilder(
-                  future: popularMovies,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Column(
-                        children: [
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          Expanded(
-                            child: makeMovieList(snapshot, false),
-                          ),
-                        ],
                       );
-                    }
-                    return const SizedBox(
-                      height: 100,
-                      child: Center(
+                    },
+                  ),
+                ),
+                title('Now in Cinemas'),
+                SizedBox(
+                  height: 270,
+                  child: FutureBuilder(
+                    future: nowPlayingMovies,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return makeMovieList(snapshot, false);
+                      }
+                      return const Center(
                         child: CircularProgressIndicator(),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              const Text(
-                'Coming Soon',
-                style: TextStyle(
-                  fontSize: 26,
-                ),
-              ),
-              SizedBox(
-                height: 270,
-                child: FutureBuilder(
-                  future: comingSoonMovies,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Column(
-                        children: [
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          Expanded(
-                            child: makeMovieList(snapshot, false),
-                          ),
-                        ],
                       );
-                    }
-                    return const SizedBox(
-                      height: 100,
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  },
+                    },
+                  ),
                 ),
-              ),
-            ],
+                title('Coming Soon'),
+                SizedBox(
+                  height: 270,
+                  child: FutureBuilder(
+                    future: comingSoonMovies,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return makeMovieList(snapshot, false);
+                      }
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -142,6 +124,15 @@ class HomeScreen extends StatelessWidget {
       },
       separatorBuilder: (context, index) => const SizedBox(
         width: 40,
+      ),
+    );
+  }
+
+  Text title(String text) {
+    return Text(
+      text,
+      style: const TextStyle(
+        fontSize: 26,
       ),
     );
   }
