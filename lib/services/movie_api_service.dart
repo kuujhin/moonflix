@@ -57,7 +57,7 @@ class ApiService {
     final url = Uri.parse('$baseUrl/movie?id=$id');
     final res = await http.get(url);
     if (res.statusCode == 200) {
-      final movie = jsonDecode(res.body);
+      final movie = jsonDecode(utf8.decode(res.bodyBytes));
       return MovieDetailSimpleModel.fromJson(movie);
     }
     throw Error();

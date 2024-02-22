@@ -2,7 +2,7 @@
 
 class MovieDetailSimpleModel {
   final int id;
-  final String title;
+  final String title, original_title;
   final double vote_average;
   final int runtime;
   final List<dynamic> genres;
@@ -12,6 +12,7 @@ class MovieDetailSimpleModel {
   MovieDetailSimpleModel.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         title = json['title'],
+        original_title = json['original_title'],
         vote_average = json['vote_average'],
         runtime = json['runtime'],
         genres = json['genres'],

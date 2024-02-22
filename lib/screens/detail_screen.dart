@@ -30,26 +30,11 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(
-          widget.title,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        centerTitle: true,
-        foregroundColor: Colors.green,
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        shadowColor: Colors.black,
-        elevation: 3,
-      ),
       body: Hero(
         tag: widget.id,
         child: Container(
           width: 800,
-          height: 1000,
+          height: 1200,
           decoration: BoxDecoration(
             image: DecorationImage(
               fit: BoxFit.cover,
@@ -72,7 +57,9 @@ class _DetailScreenState extends State<DetailScreen> {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
                         icon: const Icon(
                           Icons.arrow_back_ios_new_outlined,
                           color: Colors.white,
@@ -104,11 +91,19 @@ class _DetailScreenState extends State<DetailScreen> {
                           genres = '$genres, ${genre['name']}';
                         }
 
+                        String title = snapshot.data!.title;
+                        String originalTitle = snapshot.data!.original_title;
+                        if (title == originalTitle) {
+                          originalTitle = "";
+                        } else {
+                          originalTitle = '($originalTitle)';
+                        }
+
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              snapshot.data!.title,
+                              '$title $originalTitle',
                               style: const TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.w700,

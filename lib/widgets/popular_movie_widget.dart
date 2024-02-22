@@ -18,7 +18,7 @@ class PopularMovie extends StatelessWidget {
               id: movie.id,
               title: movie.title,
               // thumb: movie.backdrop_path,
-              thumb: movie.backdrop_path,
+              thumb: movie.poster_path,
             ),
             // fullscreenDialog: true,
           ),
@@ -28,7 +28,7 @@ class PopularMovie extends StatelessWidget {
         children: [
           Container(
             width: 300,
-            height: 200,
+            height: 168,
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
